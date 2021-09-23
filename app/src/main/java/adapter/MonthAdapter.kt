@@ -2,6 +2,7 @@ package adapter
 
 import `object`.Day
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
@@ -10,11 +11,13 @@ import android.view.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.calendar_vuvandoan.R
 import kotlinx.android.synthetic.main.item_day.view.*
-import java.util.*
 
 
 class MonthAdapter(private val dataList: MutableList<Day>, var indexItemClick: Int) :
     RecyclerView.Adapter<MonthAdapter.ViewHolder>() {
+    var month = 0
+    var year = 0
+    lateinit var context: Context
     lateinit var onItemClick: (index: Int) -> Unit
     var check = 0
     var indexCLick: Int = -1
@@ -23,6 +26,7 @@ class MonthAdapter(private val dataList: MutableList<Day>, var indexItemClick: I
     }
 
     private val TAG = "MonthAdapter"
+
     @SuppressLint("ClickableViewAccessibility")
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(color: String) {
@@ -30,22 +34,31 @@ class MonthAdapter(private val dataList: MutableList<Day>, var indexItemClick: I
             itemView.tvDay.text = item.value
             itemView.tvDay.setTextColor(Color.parseColor(color))
 
-            if (indexCLick > 6){
-                itemView.setBackgroundColor(Color.parseColor("#7FFFD4"))
-            }
             if (dataList[adapterPosition].isClick) {
                 if (adapterPosition > 6)
-                    if (check == 1)
+                    if (check == 1) {
                         itemView.setBackgroundColor(Color.parseColor("#7FFFD4"))
-                    else if (check > 1) {
+                    } else if (check > 1) {
                         itemView.setBackgroundColor(Color.parseColor("#F4A460"))
                     }
 
             } else {
                 itemView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+                val share = context.getSharedPreferences("date", Context.MODE_PRIVATE)
+                if (month == share.getInt("month", 0) && year == share.getInt("year", 0)
+                    && adapterPosition > 6
+                    && dataList[adapterPosition].value.toInt() == share.getInt("value", 0)
+                    && dataList[adapterPosition].isCurrentMonth == share.getBoolean(
+                        "isCurrentMonth",
+                        false
+                    )
+                ) {//set clicked
+                    Log.d(TAG, "bindData: $adapterPosition - ${share.getInt("index", 0)}")
+                    itemView.setBackgroundColor(Color.parseColor("#7FFFD4"))
+                }
             }
-        }
 
+        }
 
         init {
             itemView.setOnClickListener {
@@ -75,6 +88,7 @@ class MonthAdapter(private val dataList: MutableList<Day>, var indexItemClick: I
         if (position <= 6 || dataList[position].isCurrentMonth) {
             holder.bindData("#000000")//currentMonth or title
         } else holder.bindData("#C0C0C0")//previousMonth
+
     }
 
     override fun getItemCount(): Int {

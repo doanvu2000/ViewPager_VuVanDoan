@@ -4,10 +4,8 @@ import `object`.Day
 import adapter.MonthAdapter
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -49,30 +47,25 @@ class FragmentOne : Fragment() {
             startDay = "CN"
         }
         adapter = MonthAdapter(dataList, indexItemClick)
+        adapter.context = requireContext()
         initDataList(time, startDay)
         view.rcvCurrentMonth.adapter = adapter
         view.rcvCurrentMonth.layoutManager =
             GridLayoutManager(context, 7, GridLayoutManager.VERTICAL, false)
         val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
-        val index = share?.getInt("day",0)
-        val month = share?.getInt("month",0)
-        val year = share?.getInt("year",0)
-        if (time.month.value == month && time.year == year){
-            if (index!! > 6){
-                
-            }
-        }
         adapter.setItemClick {
             resetState()
-            adapter.indexItemClick = it
+            adapter.indexCLick = it
             dataList[it].isClick = true
             adapter.notifyDataSetChanged()
             val editor = share?.edit()
-            editor?.putInt("day", it)
+            editor?.putInt("index", it)
+            editor?.putInt("value", dataList[it].value.toInt())
+            editor?.putBoolean("isCurrentMonth", dataList[it].isCurrentMonth)
             editor?.putInt("month", time.month.value)
             editor?.putInt("year", time.year)
+            editor?.commit()
         }
-        Log.d("MonthAdapter", "fragment: ${adapter.indexItemClick}")
 
         return view
     }
@@ -125,7 +118,8 @@ class FragmentOne : Fragment() {
             nextDay++
             dataList.add(Day(nextDay.toString(), isCurrentMonth = false, isClick = false))
         }
-
+        adapter.month = time.month.value
+        adapter.year = time.year
         adapter.notifyDataSetChanged()
     }
 
