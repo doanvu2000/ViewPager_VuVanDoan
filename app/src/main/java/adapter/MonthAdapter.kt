@@ -7,14 +7,13 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.calendar_vuvandoan.R
 import kotlinx.android.synthetic.main.item_day.view.*
 import java.util.*
 
 
-class MonthAdapter(private val dataList: MutableList<Day>, private val today: String) :
+class MonthAdapter(private val dataList: MutableList<Day>, var indexItemClick: Int) :
     RecyclerView.Adapter<MonthAdapter.ViewHolder>() {
     lateinit var onItemClick: (index: Int) -> Unit
     var check = 0
@@ -24,23 +23,22 @@ class MonthAdapter(private val dataList: MutableList<Day>, private val today: St
     }
 
     private val TAG = "MonthAdapter"
-
     @SuppressLint("ClickableViewAccessibility")
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(color: String) {
             val item = dataList[adapterPosition]
             itemView.tvDay.text = item.value
             itemView.tvDay.setTextColor(Color.parseColor(color))
+
+            if (indexCLick > 6){
+                itemView.setBackgroundColor(Color.parseColor("#7FFFD4"))
+            }
             if (dataList[adapterPosition].isClick) {
                 if (adapterPosition > 6)
                     if (check == 1)
-                        itemView.setBackgroundColor(Color.parseColor("#339900"))
+                        itemView.setBackgroundColor(Color.parseColor("#7FFFD4"))
                     else if (check > 1) {
-                        val ran = Random()
-                        val color = Color.argb(
-                            255, ran.nextInt(256), ran.nextInt(256), ran.nextInt(256)
-                        )
-                        itemView.setBackgroundColor(color)
+                        itemView.setBackgroundColor(Color.parseColor("#F4A460"))
                     }
 
             } else {
@@ -59,7 +57,6 @@ class MonthAdapter(private val dataList: MutableList<Day>, private val today: St
                 if (motionEvent.action == MotionEvent.ACTION_DOWN) {
                     check++
                     Handler(Looper.getMainLooper()).postDelayed({
-                        Log.d(TAG, "check = $check")
                         check = 0
                     }, 500)
                 }

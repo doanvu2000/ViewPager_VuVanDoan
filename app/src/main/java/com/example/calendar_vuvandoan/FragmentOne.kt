@@ -3,16 +3,17 @@ package com.example.calendar_vuvandoan
 import `object`.Day
 import adapter.MonthAdapter
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.fragment_one.view.*
 import java.time.LocalDateTime
 import kotlin.collections.ArrayList
@@ -21,12 +22,15 @@ import kotlin.collections.ArrayList
 class FragmentOne : Fragment() {
     private var weekTitle = mutableListOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
     private val week = mutableListOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
-    private var time = LocalDateTime.now()
+    lateinit var time: LocalDateTime
     private val dataList: MutableList<Day> = ArrayList()
-
-    fun newInstance(times: LocalDateTime): FragmentOne {
+    var startDay = ""
+    lateinit var adapter: MonthAdapter
+    var indexItemClick = -1
+    fun newInstance(times: LocalDateTime, startDay: String): FragmentOne {
         val args = Bundle()
         args.putSerializable("time", times)
+        args.putString("startDay", startDay)
         val fragment = FragmentOne()
         fragment.arguments = args
         return fragment
@@ -40,44 +44,36 @@ class FragmentOne : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_one, container, false)
         time = arguments?.getSerializable("time") as LocalDateTime
-        val month = time.monthValue
-        val year = time.year
-        val day = time.dayOfMonth
-
-        view.tvTimeNow.text = "Ngày $day tháng $month năm $year"
-        initDataList("CN")
-        val adapter = MonthAdapter(dataList, day.toString())
+        startDay = arguments?.getString("startDay") as String
+        if (startDay == "") {
+            startDay = "CN"
+        }
+        adapter = MonthAdapter(dataList, indexItemClick)
+        initDataList(time, startDay)
         view.rcvCurrentMonth.adapter = adapter
         view.rcvCurrentMonth.layoutManager =
             GridLayoutManager(context, 7, GridLayoutManager.VERTICAL, false)
+        val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
+        val index = share?.getInt("day",0)
+        val month = share?.getInt("month",0)
+        val year = share?.getInt("year",0)
+        if (time.month.value == month && time.year == year){
+            if (index!! > 6){
+                
+            }
+        }
         adapter.setItemClick {
             resetState()
+            adapter.indexItemClick = it
             dataList[it].isClick = true
             adapter.notifyDataSetChanged()
+            val editor = share?.edit()
+            editor?.putInt("day", it)
+            editor?.putInt("month", time.month.value)
+            editor?.putInt("year", time.year)
         }
-        var startDay = ""
-        view.btnSetting.setOnClickListener {
-            val arrItems = arrayOf("Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật")
-            fun setAdapter() {
-                dataList.clear()
-                initDataList(startDay)
-                adapter.notifyDataSetChanged()
-                Toast.makeText(context, "Lịch đã được cập nhật lại!", Toast.LENGTH_SHORT).show()
-            }
-            MaterialAlertDialogBuilder(requireContext()).setTitle("Chọn ngày bắt đầu của tháng")
-                .setItems(arrItems) { _, which ->
-                    startDay = when (which) {
-                        0 -> "T2"
-                        1 -> "T3"
-                        2 -> "T4"
-                        3 -> "T5"
-                        4 -> "T6"
-                        5 -> "T7"
-                        else -> "CN"
-                    }
-                    setAdapter()
-                }.show()
-        }
+        Log.d("MonthAdapter", "fragment: ${adapter.indexItemClick}")
+
         return view
     }
 
@@ -86,6 +82,7 @@ class FragmentOne : Fragment() {
             dataList[i].isClick = false
         }
     }
+
 
     private fun addTitleWeek(startDay: String) {
         weekTitle = when (startDay) {
@@ -101,7 +98,7 @@ class FragmentOne : Fragment() {
             dataList.add(Day(weekTitle[i], isCurrentMonth = true, isClick = false))
     }
 
-    private fun initDataList(startDay: String) {
+    fun initDataList(timeInit: LocalDateTime, startDay: String) {
         dataList.clear()
         //title
         addTitleWeek(startDay)
@@ -128,6 +125,8 @@ class FragmentOne : Fragment() {
             nextDay++
             dataList.add(Day(nextDay.toString(), isCurrentMonth = false, isClick = false))
         }
+
+        adapter.notifyDataSetChanged()
     }
 
 }
