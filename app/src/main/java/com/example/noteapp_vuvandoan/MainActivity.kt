@@ -1,9 +1,8 @@
-package com.example.calendar_vuvandoan
+package com.example.noteapp_vuvandoan
 
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -84,6 +83,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        btnAddNoteCalendar.setOnClickListener {
+
+        }
     }
 
     class AdapterViewPager(manager: FragmentManager, behavior: Int) :

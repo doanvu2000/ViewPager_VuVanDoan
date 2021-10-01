@@ -1,4 +1,4 @@
-package com.example.calendar_vuvandoan
+package com.example.noteapp_vuvandoan
 
 import org.junit.Test
 

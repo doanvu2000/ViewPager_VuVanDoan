@@ -9,7 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.calendar_vuvandoan.R
+import com.example.noteapp_vuvandoan.R
 import kotlinx.android.synthetic.main.item_day.view.*
 
 
