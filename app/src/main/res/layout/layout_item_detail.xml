@@ -4,13 +4,13 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:paddingStart="4dp"
         android:id="@+id/inputDetailTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:padding="10dp"
+        android:paddingStart="4dp"
         android:text="Title"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -42,7 +42,7 @@
         android:id="@+id/btnUpdateNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/inputDetailContentNote"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="Cập nhật ghi chú"

@@ -3,7 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
+        android:id="@+id/write_to_file"
+        android:title="Sao lưu dữ liệu" />
+    <item
+        android:id="@+id/read_from_file"
+        android:title="Phục hồi dữ liệu" />
+    <item
+        android:id="@+id/view_calendar"
+        android:title="Xem lịch ghi chú" />
+    <item
         android:id="@+id/delete_all_notes"
-        android:title="Xóa tất cả ghi chú" />
+        android:title="Xóa toàn bộ ghi chú" />
 
 </menu>

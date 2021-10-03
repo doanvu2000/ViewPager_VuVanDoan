@@ -4,6 +4,7 @@ import `object`.Day
 import adapter.MonthAdapter
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,25 +12,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_one.view.*
 import java.time.LocalDateTime
 import kotlin.collections.ArrayList
 
 @RequiresApi(Build.VERSION_CODES.O)
-class FragmentOne : Fragment() {
+class MonthFragment : Fragment() {
     private var weekTitle = mutableListOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
     private val week = mutableListOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
     lateinit var time: LocalDateTime
     private val dataList: MutableList<Day> = ArrayList()
     var startDay = ""
     lateinit var adapter: MonthAdapter
-    var indexItemClick = -1
-    fun newInstance(times: LocalDateTime, startDay: String): FragmentOne {
+    var listTime: MutableList<String> = ArrayList()
+    fun newInstance(times: LocalDateTime, startDay: String): MonthFragment {
         val args = Bundle()
         args.putSerializable("time", times)
         args.putString("startDay", startDay)
-        val fragment = FragmentOne()
+        val fragment = MonthFragment()
         fragment.arguments = args
         return fragment
     }
@@ -46,25 +48,39 @@ class FragmentOne : Fragment() {
         if (startDay == "") {
             startDay = "CN"
         }
-        adapter = MonthAdapter(dataList, indexItemClick)
+        adapter = MonthAdapter(dataList, listTime)
         adapter.context = requireContext()
         initDataList(time, startDay)
+        adapter.listTime = listTime
         view.rcvCurrentMonth.adapter = adapter
         view.rcvCurrentMonth.layoutManager =
             GridLayoutManager(context, 7, GridLayoutManager.VERTICAL, false)
         val share = context?.getSharedPreferences("date", Context.MODE_PRIVATE)
         adapter.setItemClick {
             resetState()
-            adapter.indexCLick = it
             dataList[it].isClick = true
+            adapter.day = dataList[it].value
             adapter.notifyDataSetChanged()
             val editor = share?.edit()
-            editor?.putInt("index", it)
-            editor?.putInt("value", dataList[it].value.toInt())
-            editor?.putBoolean("isCurrentMonth", dataList[it].isCurrentMonth)
-            editor?.putInt("month", time.month.value)
-            editor?.putInt("year", time.year)
-            editor?.commit()
+//            editor?.putInt("index", it)
+//            editor?.putInt("value", dataList[it].value.toInt())
+//            editor?.putBoolean("isCurrentMonth", dataList[it].isCurrentMonth)
+//            editor?.putInt("month", time.month.value)
+//            editor?.putInt("year", time.year)
+//            editor?.commit()
+            //get time and put to AddNoteActivity
+
+            var month = time.month.value
+            var year = time.year
+            if (!dataList[it].isCurrentMonth) {
+                if (it < 20) // not currentMonth
+                    month--
+                else month++
+            }
+            adapter.day = dataList[it].value
+            adapter.month = month
+            adapter.year = year
+
         }
 
         return view

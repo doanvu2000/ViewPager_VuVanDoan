@@ -3,6 +3,7 @@ package com.example.noteapp_vuvandoan
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_add_note.*
 
@@ -15,6 +16,10 @@ class AddNoteActivity : AppCompatActivity() {
         btnAdd.setOnClickListener {
             addNote()
         }
+        val day = intent.getIntExtra("dayNote", 1).toString()
+        val month = intent.getIntExtra("monthNote", 1)
+        val year = intent.getIntExtra("yearNote", 2021)
+        inputTimeNote.setText("$day/$month/$year")
     }
 
     private fun addNote() {

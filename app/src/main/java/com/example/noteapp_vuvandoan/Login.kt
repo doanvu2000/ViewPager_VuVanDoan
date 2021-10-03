@@ -10,25 +10,19 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_login.*
 
 class Login : AppCompatActivity() {
-    private val TAG = "Login"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setUpPassCodeInput()
         val share = getSharedPreferences("PassWord", MODE_PRIVATE)
-        val edit = share.edit()
         btnLogin.setOnClickListener {
-            edit.putString("password", "0000")
-            edit.apply()
             val pass = inputCode1.text.toString() + inputCode2.text.toString() +
                     inputCode3.text.toString() + inputCode4.text.toString()
             if (pass.length != 4) {
                 Toast.makeText(this, "Vui lòng nhập mật khẩu gồm 4 số", Toast.LENGTH_SHORT).show()
             } else {
-                Log.d(TAG, "passInput:$pass")
                 val localPass = share.getString("password", "")
-                Log.d(TAG, "passInput:$pass, localpass = $localPass")
                 if (pass == localPass) {
                     //login
                     startActivity(Intent(this, MainActivity::class.java))
@@ -40,12 +34,13 @@ class Login : AppCompatActivity() {
 
         }
         btnChangePass.setOnClickListener {//change PassWord to Login
-
+            startActivity(Intent(this, ChangePassActivity::class.java))
+            finish()
         }
     }
 
     fun setUpPassCodeInput() {
-        inputCode1.addTextChangedListener(object :TextWatcher{
+        inputCode1.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
             }
