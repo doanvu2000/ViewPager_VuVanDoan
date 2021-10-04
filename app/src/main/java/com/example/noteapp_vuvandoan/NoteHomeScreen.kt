@@ -2,6 +2,7 @@ package com.example.noteapp_vuvandoan
 
 import adapter.NoteAdapter
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,12 +10,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView.OnQueryTextListener
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_note_home_screen.*
 import java.io.*
 import java.lang.Exception
 import java.nio.charset.Charset
+import java.time.LocalDateTime
 
 class NoteHomeScreen : AppCompatActivity() {
     var noteList: MutableList<Note> = ArrayList()
@@ -22,6 +27,7 @@ class NoteHomeScreen : AppCompatActivity() {
     lateinit var noteDatabase: NoteDatabase
     lateinit var noteAdapter: NoteAdapter
     val fileName = "notes.csv"
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_note_home_screen)
@@ -62,9 +68,35 @@ class NoteHomeScreen : AppCompatActivity() {
             }
         })
         btnAddNote.setOnClickListener {
-            startActivity(Intent(this, AddNoteActivity::class.java))
+            val intent = Intent(this, AddNoteActivity::class.java)
+            val now = LocalDateTime.now()
+            intent.putExtra("dayNote", now.dayOfMonth)
+            intent.putExtra("monthNote", now.monthValue)
+            intent.putExtra("yearNote", now.year)
+            startActivity(intent)
         }
+        val itemTouchHelper: ItemTouchHelper.SimpleCallback = object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
 
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                Toast.makeText(
+                    applicationContext,
+                    "Đã xóa ghi chú \" ${noteList[viewHolder.adapterPosition].title}\"",
+                    Toast.LENGTH_LONG
+                ).show()
+                noteDatabase.deleteNote(noteList[viewHolder.adapterPosition])
+                noteList.removeAt(viewHolder.adapterPosition)
+                noteAdapter.notifyDataSetChanged()
+            }
+        }
+        ItemTouchHelper(itemTouchHelper).attachToRecyclerView(rcv_notes)
     }
 
     private fun fetchAllNoteFromDatabase() {
@@ -150,8 +182,8 @@ class NoteHomeScreen : AppCompatActivity() {
     }
 
     private fun sortNoteList(list: MutableList<Note>) {
-        for (i in 0 until list.size-2) {
-            for (j in i..list.size-1) {
+        for (i in 0 until list.size - 2) {
+            for (j in i..list.size - 1) {
                 val timeNote1 = list[i].timeNote.split("/")
                 val timeNote2 = list[j].timeNote.split("/")
                 if (timeNote2[2] > timeNote1[2]) {//year

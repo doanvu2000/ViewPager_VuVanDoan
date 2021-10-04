@@ -25,7 +25,7 @@ class Login : AppCompatActivity() {
                 val localPass = share.getString("password", "")
                 if (pass == localPass) {
                     //login
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, NoteHomeScreen::class.java))
                     finish()
                 } else {
                     Toast.makeText(this, "Mật khẩu chưa chính xác", Toast.LENGTH_SHORT).show()

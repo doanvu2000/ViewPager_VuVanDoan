@@ -26,5 +26,10 @@ class DetailNoteActivity : AppCompatActivity() {
             startActivity(Intent(this, NoteHomeScreen::class.java))
             finish()
         }
+        btnDeleteNote.setOnClickListener {
+            val status = NoteDatabase(this).deleteNote(oldNote)
+            startActivity(Intent(this, NoteHomeScreen::class.java))
+            finish()
+        }
     }
 }

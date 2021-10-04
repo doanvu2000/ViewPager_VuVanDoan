@@ -32,11 +32,12 @@ class NoteDatabase(var context: Context) :
         onCreate(db)
     }
 
-    fun deleteAllNote(){
+    fun deleteAllNote() {
         val db = this.writableDatabase
         db.execSQL("delete from $TBL_NOTE")
         db.close()
     }
+
     fun insertNote(note: Note): Long {
         val db = this.writableDatabase
         val contentValue = ContentValues()
@@ -62,17 +63,15 @@ class NoteDatabase(var context: Context) :
         return success
     }
 
-    fun deleteNote(note: Note): Long {
+    fun deleteNote(note: Note): Int {
         val db = this.writableDatabase
-        val contentValue = ContentValues()
-        contentValue.put(TITLE, note.title)
-        contentValue.put(TIME_NOTE, note.timeNote)
-        contentValue.put(CONTENT_NOTE, note.content)
-        val success = db.insert(TBL_NOTE, null, contentValue)
+        val success = db.delete(
+            TBL_NOTE, "$TITLE = ? and $TIME_NOTE = ? and $CONTENT_NOTE = ?",
+            arrayOf(note.title, note.timeNote, note.content)
+        )
         db.close()
         return success
     }
-
 
 
     @SuppressLint("Recycle")
