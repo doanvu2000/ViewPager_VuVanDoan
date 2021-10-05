@@ -23,12 +23,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/searchview_background"
         app:iconifiedByDefault="false"
-        app:queryBackground="@color/transparent"
         app:layout_constraintBottom_toTopOf="@id/rcv_notes"
         app:layout_constraintTop_toTopOf="parent"
+        app:queryBackground="@color/transparent"
         app:queryHint="Tìm kiếm ghi chú" />
 
     <androidx.recyclerview.widget.RecyclerView

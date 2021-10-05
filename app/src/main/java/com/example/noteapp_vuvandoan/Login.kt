@@ -22,7 +22,9 @@ class Login : AppCompatActivity() {
             if (pass.length != 4) {
                 Toast.makeText(this, "Vui lòng nhập mật khẩu gồm 4 số", Toast.LENGTH_SHORT).show()
             } else {
-                val localPass = share.getString("password", "")
+                val isSetPass = share.getBoolean("isSetPassword", false)
+                val localPass = if (!isSetPass) "0000" else share.getString("password", "")
+                Log.d("pass", "$pass - $localPass: ")
                 if (pass == localPass) {
                     //login
                     startActivity(Intent(this, NoteHomeScreen::class.java))

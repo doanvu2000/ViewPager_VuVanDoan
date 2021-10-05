@@ -170,7 +170,7 @@ class NoteHomeScreen : AppCompatActivity() {
                 //Read data
                 val title = tokens[0]
                 val timeNote = tokens[1]
-                val content = line.substring(line.indexOf("\""))
+                val content = line.substring(line.indexOf("\"")+1,line.length - 1)
                 noteList.add(Note(title, timeNote, content))
             }
         } catch (e: Exception) {
@@ -183,7 +183,7 @@ class NoteHomeScreen : AppCompatActivity() {
 
     private fun sortNoteList(list: MutableList<Note>) {
         for (i in 0 until list.size - 2) {
-            for (j in i..list.size - 1) {
+            for (j in i until list.size) {
                 val timeNote1 = list[i].timeNote.split("/")
                 val timeNote2 = list[j].timeNote.split("/")
                 if (timeNote2[2] > timeNote1[2]) {//year
